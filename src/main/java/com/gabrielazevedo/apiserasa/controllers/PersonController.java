@@ -100,7 +100,7 @@ public class PersonController {
         return personService.updatePerson(id, personRecordDTO);
     }
 
-    @DeleteMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/{id}")
     @Operation(summary = "Realiza a Exclusão Lógica de Pessoa por ID", method = "DELETE")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Person deleted successfully!"),

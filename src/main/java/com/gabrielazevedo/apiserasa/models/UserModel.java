@@ -25,7 +25,7 @@ import java.util.UUID;
 public class UserModel implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private Long id;
     private String login;
     private String password;
     private UserRole role;

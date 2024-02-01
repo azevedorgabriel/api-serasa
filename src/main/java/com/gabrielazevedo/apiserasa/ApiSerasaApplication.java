@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "API Serasa Score", version = "1", description = "API para cadastro de pessoa e consulta de Score"))
+@OpenAPIDefinition(info = @Info(title = "API Serasa Score", version = "1", description = "API para Cadastro de Pessoa e Consulta de Score"))
 public class ApiSerasaApplication {
 
 	public static void main(String[] args) {

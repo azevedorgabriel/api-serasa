@@ -14,8 +14,7 @@ import java.util.UUID;
 public class ScoreModel extends RepresentationModel<ScoreModel> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
-
+    private Long id;
     private String description;
     private Integer min;
     private Integer max;
