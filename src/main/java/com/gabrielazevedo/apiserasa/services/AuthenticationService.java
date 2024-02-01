@@ -60,6 +60,6 @@ public class AuthenticationService {
 
         this.userRepository.save(newUser);
 
-        return ResponseEntity.status(HttpStatus.OK).body(new RegisterResponseDTO(HttpStatus.CREATED.name(), USER_CREATED));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponseDTO(HttpStatus.CREATED.name(), USER_CREATED));
     }
 }
