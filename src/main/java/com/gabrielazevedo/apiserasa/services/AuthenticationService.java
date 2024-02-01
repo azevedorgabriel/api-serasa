@@ -36,7 +36,7 @@ public class AuthenticationService {
     private TokenService tokenService;
 
 
-    public ResponseEntity<Object> login(AuthenticationDTO authenticationDTO) {
+    public ResponseEntity<LoginResponseDTO> login(AuthenticationDTO authenticationDTO) {
         var userNamePassword = new UsernamePasswordAuthenticationToken(authenticationDTO.login(), authenticationDTO.password());
 
         try {
@@ -50,7 +50,7 @@ public class AuthenticationService {
 
     }
 
-    public ResponseEntity<Object> register(RegisterDTO registerDTO) {
+    public ResponseEntity<RegisterResponseDTO> register(RegisterDTO registerDTO) {
         if (this.userRepository.findByLogin(registerDTO.login()) != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new RegisterResponseDTO(response_error, USER_EXISTS));
         }

@@ -15,18 +15,6 @@ public record PersonRecordDTO(
         @NotBlank
         String cep,
 
-        @NotBlank
-        String estado,
-
-        @NotBlank
-        String cidade,
-
-        @NotBlank
-        String bairro,
-
-        @NotBlank
-        String logradouro,
-
         @NotNull
         String telefone,
 

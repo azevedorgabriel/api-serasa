@@ -4,6 +4,7 @@ import com.gabrielazevedo.apiserasa.controllers.PersonController;
 import com.gabrielazevedo.apiserasa.dtos.PersonRecordDTO;
 import com.gabrielazevedo.apiserasa.dtos.PersonResponseDTO;
 import com.gabrielazevedo.apiserasa.enums.PersonStatus;
+import com.gabrielazevedo.apiserasa.models.CepModel;
 import com.gabrielazevedo.apiserasa.models.PersonModel;
 import com.gabrielazevedo.apiserasa.repositories.PersonRepository;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +35,8 @@ public class PersonService {
     PersonRepository personRepository;
     @Autowired
     ScoreService scoreService;
+    @Autowired
+    CepService cepService;
 
     @Value("${api.response.error}")
     private String response_error;
@@ -44,7 +47,7 @@ public class PersonService {
     @Value("${api.page.size}")
     private int sizeDefault;
 
-    private ResponseEntity<Object> personNotFound() {
+    private ResponseEntity<PersonResponseDTO> personNotFound() {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new PersonResponseDTO(response_error, PERSON_NOT_FOUND, null));
     }
 
@@ -63,11 +66,22 @@ public class PersonService {
     public ResponseEntity<PersonResponseDTO> savePerson(PersonRecordDTO personRecordDTO) {
         var personModel = new PersonModel();
         BeanUtils.copyProperties(personRecordDTO, personModel);
+
+        try {
+            CepModel cep = cepService.getDadosCep(personModel.getCep());
+            personModel.setEstado(cep.getUf());
+            personModel.setCidade(cep.getLocalidade());
+            personModel.setBairro(cep.getBairro());
+            personModel.setLogradouro(cep.getLogradouro());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         personRepository.save(personModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new PersonResponseDTO(response_success, PERSON_CREATED, personModel.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new PersonResponseDTO(response_success, response_success, personModel));
     }
 
-    public ResponseEntity<Object> getOnePerson(UUID id) {
+    public ResponseEntity<PersonResponseDTO> getOnePerson(UUID id) {
         Optional<PersonModel> person = personRepository.findByIdAndStatus(id, PersonStatus.ENABLED);
 
         if (person.isEmpty()) {
@@ -78,7 +92,7 @@ public class PersonService {
         Pageable pageable = PageRequest.of(pageDefault, sizeDefault);
         personModel.add(linkTo(methodOn(PersonController.class).getAllPerson(pageable)).withRel("Person List"));
         personModel.setScoreDescription(scoreService.getScoreDescription(personModel.getScore()));
-        return ResponseEntity.ok().body(personModel);
+        return ResponseEntity.ok().body(new PersonResponseDTO(response_success, response_success, personModel));
     }
 
     public ResponseEntity<Page<PersonModel>> getAllPerson(Pageable pageable) {
@@ -108,7 +122,7 @@ public class PersonService {
         return personResponse(personModelList);
     }
 
-    public ResponseEntity<Object> updatePerson(UUID id, PersonRecordDTO personRecordDTO) {
+    public ResponseEntity<PersonResponseDTO> updatePerson(UUID id, PersonRecordDTO personRecordDTO) {
         Optional<PersonModel> person = personRepository.findByIdAndStatus(id, PersonStatus.ENABLED);
 
         if (person.isEmpty()) {
@@ -118,10 +132,10 @@ public class PersonService {
         var personModel = person.get();
         BeanUtils.copyProperties(personRecordDTO, personModel);
         personRepository.save(personModel);
-        return ResponseEntity.ok().body(new PersonResponseDTO(response_success, PERSON_UPDATED, personModel.getId()));
+        return ResponseEntity.ok().body(new PersonResponseDTO(response_success, PERSON_UPDATED, personModel));
     }
 
-    public ResponseEntity<Object> deletePerson(UUID id) {
+    public ResponseEntity<PersonResponseDTO> deletePerson(UUID id) {
         Optional<PersonModel> person = personRepository.findByIdAndStatus(id, PersonStatus.ENABLED);
 
         if (person.isEmpty()) {

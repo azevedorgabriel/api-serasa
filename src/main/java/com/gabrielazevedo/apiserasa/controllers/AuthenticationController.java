@@ -3,6 +3,7 @@ package com.gabrielazevedo.apiserasa.controllers;
 import com.gabrielazevedo.apiserasa.dtos.AuthenticationDTO;
 import com.gabrielazevedo.apiserasa.dtos.LoginResponseDTO;
 import com.gabrielazevedo.apiserasa.dtos.RegisterDTO;
+import com.gabrielazevedo.apiserasa.dtos.RegisterResponseDTO;
 import com.gabrielazevedo.apiserasa.models.UserModel;
 import com.gabrielazevedo.apiserasa.repositories.UserRepository;
 import com.gabrielazevedo.apiserasa.services.AuthenticationService;
@@ -36,7 +37,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "Login successfully!"),
             @ApiResponse(responseCode = "403", description = "Forbidden - User must be ADMIN")
     })
-    public ResponseEntity<Object> login(@RequestBody @Valid AuthenticationDTO authenticationDTO) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO authenticationDTO) {
         return authService.login(authenticationDTO);
     }
 
@@ -48,7 +49,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "403", description = "Forbidden - User must be ADMIN"),
             @ApiResponse(responseCode = "403", description = "Forbidden - Username or/and password are invalid!")
     })
-    public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO registerDTO) {
+    public ResponseEntity<RegisterResponseDTO> register(@RequestBody @Valid RegisterDTO registerDTO) {
         return authService.register(registerDTO);
     }
 }

@@ -52,7 +52,7 @@ public class PersonController {
             @ApiResponse(responseCode = "200", description = "Person listed successfully!"),
             @ApiResponse(responseCode = "400", description = "Person not found!")
     })
-    public ResponseEntity<Object> getOnePerson(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<PersonResponseDTO> getOnePerson(@PathVariable(value = "id") UUID id) {
         return personService.getOnePerson(id);
     }
 
@@ -95,7 +95,7 @@ public class PersonController {
             @ApiResponse(responseCode = "400", description = "Person not found!"),
             @ApiResponse(responseCode = "403", description = "Forbidden - User must be ADMIN")
     })
-    public ResponseEntity<Object> updatePerson(@PathVariable(value = "id") UUID id,
+    public ResponseEntity<PersonResponseDTO> updatePerson(@PathVariable(value = "id") UUID id,
                                                @RequestBody @Valid PersonRecordDTO personRecordDTO) {
         return personService.updatePerson(id, personRecordDTO);
     }
@@ -107,7 +107,7 @@ public class PersonController {
             @ApiResponse(responseCode = "400", description = "Person not found!"),
             @ApiResponse(responseCode = "403", description = "Forbidden - User must be ADMIN")
     })
-    public ResponseEntity<Object> deletePerson(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<PersonResponseDTO> deletePerson(@PathVariable(value = "id") UUID id) {
         return personService.deletePerson(id);
     }
 
