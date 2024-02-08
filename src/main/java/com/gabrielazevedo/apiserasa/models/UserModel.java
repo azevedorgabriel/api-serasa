@@ -16,15 +16,16 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "USERS")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "USERS")
 @EqualsAndHashCode(of = "id")
+@SequenceGenerator(name = "seq_user", sequenceName = "seq_user", allocationSize = 1, initialValue = 3)
 public class UserModel implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_user")
     private Long id;
     private String login;
     private String password;

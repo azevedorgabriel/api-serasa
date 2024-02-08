@@ -2,6 +2,7 @@ package com.gabrielazevedo.apiserasa.controllers;
 
 import com.gabrielazevedo.apiserasa.dtos.PersonRecordDTO;
 import com.gabrielazevedo.apiserasa.dtos.PersonResponseDTO;
+import com.gabrielazevedo.apiserasa.dtos.ResponseDefaultDTO;
 import com.gabrielazevedo.apiserasa.models.PersonModel;
 import com.gabrielazevedo.apiserasa.services.PersonService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +35,8 @@ public class PersonController {
             @ApiResponse(responseCode = "201", description = "Person created successfully!"),
             @ApiResponse(responseCode = "403", description = "Forbidden - User must be ADMIN")
     })
-    public ResponseEntity<PersonResponseDTO> savePerson(@RequestBody @Valid PersonRecordDTO personRecordDTO) {
-        return personService.savePerson(personRecordDTO);
+    public ResponseEntity<ResponseDefaultDTO> savePerson(@RequestBody @Valid PersonRecordDTO personRecordDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(personService.savePerson(personRecordDTO));
     }
 
     @GetMapping
@@ -43,7 +45,7 @@ public class PersonController {
             @ApiResponse(responseCode = "200", description = "Person listed successfully!")
     })
     public ResponseEntity<Page<PersonModel>> getAllPerson(Pageable pageable) {
-        return personService.getAllPerson(pageable);
+        return ResponseEntity.ok().body(personService.getAllPerson(pageable));
     }
 
     @GetMapping("/{id}")
@@ -53,7 +55,7 @@ public class PersonController {
             @ApiResponse(responseCode = "400", description = "Person not found!")
     })
     public ResponseEntity<PersonResponseDTO> getOnePerson(@PathVariable(value = "id") UUID id) {
-        return personService.getOnePerson(id);
+        return ResponseEntity.ok().body(personService.getOnePerson(id));
     }
 
     @GetMapping("/search/nome/{nome}")
@@ -63,7 +65,7 @@ public class PersonController {
             @ApiResponse(responseCode = "400", description = "Person not found!")
     })
     public ResponseEntity<List<PersonModel>> getSearchPersonNome(@PathVariable(value = "nome") String nome) {
-        return personService.getSearchPersonNome(nome);
+        return ResponseEntity.ok().body(personService.getSearchPersonNome(nome));
     }
 
     @GetMapping("/search/idade/{idade}")
@@ -74,7 +76,7 @@ public class PersonController {
             @ApiResponse(responseCode = "400", description = "Person not found!")
     })
     public ResponseEntity<List<PersonModel>> getSearchPersonIdade(@PathVariable(value = "idade") String idade) {
-        return personService.getSearchPersonIdade(idade);
+        return ResponseEntity.ok().body(personService.getSearchPersonIdade(idade));
     }
 
     @GetMapping("/search/cep/{cep}")
@@ -85,7 +87,7 @@ public class PersonController {
             @ApiResponse(responseCode = "400", description = "Person not found!")
     })
     public ResponseEntity<List<PersonModel>> getSearchPersonCep(@PathVariable(value = "cep") String cep) {
-        return personService.getSearchPersonCep(cep);
+        return ResponseEntity.ok().body(personService.getSearchPersonCep(cep));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -95,9 +97,9 @@ public class PersonController {
             @ApiResponse(responseCode = "400", description = "Person not found!"),
             @ApiResponse(responseCode = "403", description = "Forbidden - User must be ADMIN")
     })
-    public ResponseEntity<PersonResponseDTO> updatePerson(@PathVariable(value = "id") UUID id,
+    public ResponseEntity<ResponseDefaultDTO> updatePerson(@PathVariable(value = "id") UUID id,
                                                @RequestBody @Valid PersonRecordDTO personRecordDTO) {
-        return personService.updatePerson(id, personRecordDTO);
+        return ResponseEntity.ok().body(personService.updatePerson(id, personRecordDTO));
     }
 
     @DeleteMapping(value = "/{id}")
@@ -107,8 +109,8 @@ public class PersonController {
             @ApiResponse(responseCode = "400", description = "Person not found!"),
             @ApiResponse(responseCode = "403", description = "Forbidden - User must be ADMIN")
     })
-    public ResponseEntity<PersonResponseDTO> deletePerson(@PathVariable(value = "id") UUID id) {
-        return personService.deletePerson(id);
+    public ResponseEntity<ResponseDefaultDTO> deletePerson(@PathVariable(value = "id") UUID id) {
+        return ResponseEntity.ok().body(personService.deletePerson(id));
     }
 
 }

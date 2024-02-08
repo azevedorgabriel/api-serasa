@@ -4,5 +4,5 @@ import com.gabrielazevedo.apiserasa.models.PersonModel;
 
 import java.util.UUID;
 
-public record PersonResponseDTO (String status, String message, PersonModel person_data) {
+public record PersonResponseDTO (String status, PersonModel person_data) {
 }
