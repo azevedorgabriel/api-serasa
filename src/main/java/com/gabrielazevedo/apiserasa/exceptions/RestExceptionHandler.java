@@ -20,7 +20,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String INVALID_USER = "User and/or password are invalid!";
 
     @ExceptionHandler({InternalAuthenticationServiceException.class, AuthenticationException.class})
-    private ResponseEntity<ResponseDefaultDTO> invalidUserPassHandler(AuthenticationException ex) {
+    private ResponseEntity<ResponseDefaultDTO> invalidUserPassHandler(AuthenticationException ignored) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDefaultDTO(response_error, INVALID_USER));
     }
 

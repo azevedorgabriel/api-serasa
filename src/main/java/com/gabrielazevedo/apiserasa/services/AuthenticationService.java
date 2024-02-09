@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
     private static final String USER_CREATED = "User created successfully!";
 
-    @Value("${api.response.error}")
-    private String response_error;
     @Value("${api.response.success}")
     private String response_success;
 

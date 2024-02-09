@@ -3,17 +3,12 @@ package com.gabrielazevedo.apiserasa.models;
 import com.gabrielazevedo.apiserasa.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.hateoas.RepresentationModel;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 @Getter
