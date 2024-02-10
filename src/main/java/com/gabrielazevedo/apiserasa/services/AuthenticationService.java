@@ -9,7 +9,6 @@ import com.gabrielazevedo.apiserasa.models.UserModel;
 import com.gabrielazevedo.apiserasa.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -47,6 +46,6 @@ public class AuthenticationService {
 
         userRepository.save(newUser);
 
-        return new ResponseDefaultDTO(HttpStatus.CREATED.name(), USER_CREATED);
+        return new ResponseDefaultDTO(response_success, USER_CREATED);
     }
 }

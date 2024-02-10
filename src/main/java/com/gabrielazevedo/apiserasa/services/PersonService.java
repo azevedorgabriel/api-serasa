@@ -16,8 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,19 +55,27 @@ public class PersonService {
         return personModelList;
     }
 
-    public ResponseDefaultDTO savePerson(PersonRecordDTO personRecordDTO) {
-        var personModel = new PersonModel();
+    private void saveUpdatePerson(PersonModel personModel, PersonRecordDTO personRecordDTO) {
+        var oldCep = personModel.getCep();
         BeanUtils.copyProperties(personRecordDTO, personModel);
 
-        try {
-            CepModel cep = cepService.getAdditionalDataCep(personModel.getCep());
-            personModel.setEstado(cep.getUf());
-            personModel.setCidade(cep.getLocalidade());
-            personModel.setBairro(cep.getBairro());
-            personModel.setLogradouro(cep.getLogradouro());
-        } catch (Exception ignored) { }
+        //in case of a new person, oldCep will be null, so app will get additional data cep
+        //in case of an update, app checks if entered cep(zipcode) is different from the one stored previously
+        if (oldCep == null || !Objects.equals(personRecordDTO.cep(), oldCep)) {
+            try {
+                CepModel cep = cepService.getAdditionalDataCep(personModel.getCep());
+                personModel.setEstado(cep.getUf());
+                personModel.setCidade(cep.getLocalidade());
+                personModel.setBairro(cep.getBairro());
+                personModel.setLogradouro(cep.getLogradouro());
+            } catch (Exception ignored) { }
+        }
 
         personRepository.save(personModel);
+    }
+
+    public ResponseDefaultDTO savePerson(PersonRecordDTO personRecordDTO) {
+        this.saveUpdatePerson(new PersonModel(), personRecordDTO);
         return new ResponseDefaultDTO(response_success, PERSON_CREATED);
     }
 
@@ -116,9 +124,7 @@ public class PersonService {
             throw new PersonNotFoundException();
         }
 
-        var personModel = person.get();
-        BeanUtils.copyProperties(personRecordDTO, personModel);
-        personRepository.save(personModel);
+        this.saveUpdatePerson(person.get(), personRecordDTO);
         return new ResponseDefaultDTO(response_success, PERSON_UPDATED);
     }
 
