@@ -1,6 +1,8 @@
 package com.gabrielazevedo.apiserasa.exceptions;
 
 import com.gabrielazevedo.apiserasa.dtos.ResponseDefaultDTO;
+import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @ControllerAdvice
 @RestControllerAdvice
@@ -21,7 +27,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({InternalAuthenticationServiceException.class, AuthenticationException.class})
     private ResponseEntity<ResponseDefaultDTO> invalidUserPassHandler(AuthenticationException ignored) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDefaultDTO(response_error, INVALID_USER));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDefaultDTO(response_error, INVALID_USER));
     }
 
     @ExceptionHandler(UsernameAlreadyExistsException.class)
@@ -34,8 +40,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDefaultDTO(response_error, ex.getMessage()));
     }
 
-    // Método utilizado em Security Filter devido Spring nao direcionar exception para este ControllerAdvice
-    public ResponseDefaultDTO invalidTokenJwtHandler() {
-        return new ResponseDefaultDTO(response_error, new InvalidTokenJwtException().getMessage());
+    public void invalidTokenJwtHandler(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setCharacterEncoding(String.valueOf(StandardCharsets.UTF_8));
+        response.setContentType(String.valueOf(APPLICATION_JSON));
+        response.getWriter().write(new Gson().toJson(new ResponseDefaultDTO(response_error, new InvalidTokenJwtException().getMessage())));
     }
+
+    public void accessDeniedHandler(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setCharacterEncoding(String.valueOf(StandardCharsets.UTF_8));
+        response.setContentType(String.valueOf(APPLICATION_JSON));
+        response.getWriter().write(new Gson().toJson(new ResponseDefaultDTO(response_error, new AccessDeniedException().getMessage())));
+    }
+
 }

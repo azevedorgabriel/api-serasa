@@ -5,7 +5,6 @@ import com.gabrielazevedo.apiserasa.exceptions.InvalidTokenJwtException;
 import com.gabrielazevedo.apiserasa.exceptions.RestExceptionHandler;
 import com.gabrielazevedo.apiserasa.repositories.UserRepository;
 import com.gabrielazevedo.apiserasa.services.TokenService;
-import com.google.gson.Gson;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,11 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -49,18 +44,11 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (TokenExpiredException | InvalidTokenJwtException ex) {
-            this.responseInvalidTokenJwt(response);
+            restExceptionHandler.invalidTokenJwtHandler(response);
         }
     }
 
-    private void responseInvalidTokenJwt(HttpServletResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.setCharacterEncoding(String.valueOf(StandardCharsets.UTF_8));
-        response.setContentType(String.valueOf(APPLICATION_JSON));
-        response.getWriter().write(new Gson().toJson(restExceptionHandler.invalidTokenJwtHandler()));
-    }
-
-    private String recoveryToken(HttpServletRequest request) {
+    public String recoveryToken(HttpServletRequest request) {
         var authHeaderAuth = request.getHeader("Authorization");
         if (authHeaderAuth == null) {
             return "";
